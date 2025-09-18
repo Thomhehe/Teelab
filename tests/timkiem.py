@@ -10,11 +10,10 @@ from utils.read import read
 test_data = read("Teelab.xlsx")
 report_created = False
 
-# Hàm ghi dữ liệu vào Excel
 def report(filename, row_data):
     global report_created
     if not report_created:
-        # Tạo file Excel mới + header nếu chưa có
+
         wb = Workbook()
         ws = wb.active
         ws.append([
@@ -29,7 +28,6 @@ def report(filename, row_data):
         wb.save(filename)
         report_created = True
 
-    # Mở file và ghi thêm kết quả
     wb = load_workbook(filename)
     ws = wb.active
     ws.append(row_data)
@@ -53,16 +51,11 @@ def test_timkiem(tukhoa, expected):
     print(f"Số sản phẩm mong đợi: {so_mongdoi}")
     print(f"Số sản phẩm thực tế: {so_thucte}")
 
-    status = "PASS"
-    try:
-        assert expected.strip() in result.strip()
-        assert so_thucte == so_mongdoi
-    except AssertionError:
-        status = "FAIL"
-
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    # Luôn lưu file trong thư mục test\report
+    assert expected.strip() in result.strip(), "Text kết quả không khớp"
+    assert so_thucte == so_mongdoi, f"Số lượng sai: mong đợi {so_mongdoi}, thực tế {so_thucte}"
+
+    status = "PASS"
     report(os.path.join("tests", "report", "Teelab_Result.xlsx"),
            [test_time, tukhoa, expected, result, so_mongdoi, so_thucte, status])
-
     driver.quit()
