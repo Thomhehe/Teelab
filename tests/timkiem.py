@@ -1,31 +1,33 @@
-import datetime
+from datetime import datetime
 import os
 
 import pytest
 from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 from pages.timkiem_page import Timkiem
-from utils.excel import read
+from utils.read import read
 
 test_data = read("Teelab.xlsx")
-report_file = "Teelab_Result.xlsx"
+report_created = False
 
 # Hàm ghi dữ liệu vào Excel
 def report(filename, row_data):
-    if not os.path.exists(filename):
+    global report_created
+    if not report_created:
         # Tạo file Excel mới + header nếu chưa có
         wb = Workbook()
         ws = wb.active
         ws.append([
-            "Thời gian Test",
-            "Từ khóa",
+            "Time",
+            "Keyword",
             "Expected",
             "Actual",
-            "Đếm Sản phẩm",
-            "Số lượng sản phẩm muốn",
+            "Actual quantity",
+            "Expected quantity",
             "Status"
         ])
         wb.save(filename)
+        report_created = True
 
     # Mở file và ghi thêm kết quả
     wb = load_workbook(filename)
@@ -42,22 +44,25 @@ def test_timkiem(tukhoa, expected):
 
     timkiem_page.tim(tukhoa)
     result = timkiem_page.get_ketqua()
-    print(f"Từ khóa: {tukhoa} | Kết quả thực tế: {result} | Mong đợi: {expected}")
-    # assert expected in result
+    so_mongdoi = timkiem_page.get_soluongsp()
+    so_thucte = timkiem_page.get_sanpham()
 
-    so_sanpham = timkiem_page.get_sanpham_count()
-    print(f"Số sản phẩm thực tế: {so_sanpham}")
+    print(f"Từ khóa: {tukhoa}")
+    print(f"Kết quả mong đợi: {expected}")
+    print(f"Kết quả thực tế: {result}")
+    print(f"Số sản phẩm mong đợi: {so_mongdoi}")
+    print(f"Số sản phẩm thực tế: {so_thucte}")
 
-    so_text = int("".join(filter(str.isdigit, result)))
-    print(f"Số sản phẩm trong text: {so_text}")
     status = "PASS"
     try:
-        assert expected in result
-        assert so_sanpham == so_text
+        assert expected.strip() in result.strip()
+        assert so_thucte == so_mongdoi
     except AssertionError:
         status = "FAIL"
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    report("Teelab_Result.xlsx", [test_time, tukhoa, expected, result, so_sanpham, so_text, status])
+    # Luôn lưu file trong thư mục test\report
+    report(os.path.join("tests", "report", "Teelab_Result.xlsx"),
+           [test_time, tukhoa, expected, result, so_mongdoi, so_thucte, status])
 
     driver.quit()
