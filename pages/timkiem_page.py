@@ -34,7 +34,7 @@ class Timkiem(Base):
         except:
             return ""
 
-    def get_sanpham(self):
+    def get_slthucte(self):
         wait = WebDriverWait(self.driver, 10)
         all_products = set()
 
@@ -66,7 +66,7 @@ class Timkiem(Base):
 
         return len(all_products) if all_products else 0
 
-    def get_soluongsp(self):
+    def get_slmongdoi(self):
 
         result = self.get_ketqua()
         digits = "".join(filter(str.isdigit, result))

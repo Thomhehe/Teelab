@@ -7,7 +7,7 @@ from selenium import webdriver
 from pages.timkiem_page import Timkiem
 from utils.read import read
 
-test_data = read("Teelab.xlsx")
+test_data = read("Teelab.xlsx", sheet_name="Timkiem")
 report_created = False
 
 def report(filename, row_data):
@@ -21,8 +21,8 @@ def report(filename, row_data):
             "Keyword",
             "Expected",
             "Actual",
-            "Actual quantity",
             "Expected quantity",
+            "Actual quantity",
             "Status"
         ])
         wb.save(filename)
@@ -42,20 +42,20 @@ def test_timkiem(tukhoa, expected):
 
     timkiem_page.tim(tukhoa)
     result = timkiem_page.get_ketqua()
-    so_mongdoi = timkiem_page.get_soluongsp()
-    so_thucte = timkiem_page.get_sanpham()
-
-    print(f"Từ khóa: {tukhoa}")
-    print(f"Kết quả mong đợi: {expected}")
-    print(f"Kết quả thực tế: {result}")
-    print(f"Số sản phẩm mong đợi: {so_mongdoi}")
-    print(f"Số sản phẩm thực tế: {so_thucte}")
+    sl_mongdoi = timkiem_page.get_slmongdoi()
+    sl_thucte = timkiem_page.get_slthucte()
+    #
+    # print(f"Từ khóa: {tukhoa}")
+    # print(f"Kết quả mong đợi: {expected}")
+    # print(f"Kết quả thực tế: {result}")
+    # print(f"Số sản phẩm mong đợi: {so_mongdoi}")
+    # print(f"Số sản phẩm thực tế: {so_thucte}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     assert expected.strip() in result.strip(), "Text kết quả không khớp"
-    assert so_thucte == so_mongdoi, f"Số lượng sai: mong đợi {so_mongdoi}, thực tế {so_thucte}"
+    assert sl_thucte == sl_mongdoi, f"Số lượng sai: mong đợi {sl_mongdoi}, thực tế {sl_thucte}"
 
     status = "PASS"
-    report(os.path.join("tests", "report", "Teelab_Result.xlsx"),
-           [test_time, tukhoa, expected, result, so_mongdoi, so_thucte, status])
+    report(os.path.join("tests", "report", "Timkiem_Report.xlsx"),
+           [test_time, tukhoa, expected, result, sl_mongdoi, sl_thucte, status])
     driver.quit()
