@@ -41,21 +41,21 @@ def test_timkiem(tukhoa, expected):
     timkiem_page = Timkiem(driver)
 
     timkiem_page.tim(tukhoa)
-    result = timkiem_page.get_ketqua()
+    actual = timkiem_page.get_ketqua()
     sl_mongdoi = timkiem_page.get_slmongdoi()
     sl_thucte = timkiem_page.get_slthucte()
-    #
-    # print(f"Từ khóa: {tukhoa}")
-    # print(f"Kết quả mong đợi: {expected}")
-    # print(f"Kết quả thực tế: {result}")
-    # print(f"Số sản phẩm mong đợi: {so_mongdoi}")
-    # print(f"Số sản phẩm thực tế: {so_thucte}")
+
+    print(f"Từ khóa: {tukhoa}")
+    print(f"Kết quả mong đợi: {expected}")
+    print(f"Kết quả thực tế: {actual}")
+    print(f"Số sản phẩm mong đợi: {sl_mongdoi}")
+    print(f"Số sản phẩm thực tế: {sl_thucte}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    assert expected.strip() in result.strip(), "Text kết quả không khớp"
-    assert sl_thucte == sl_mongdoi, f"Số lượng sai: mong đợi {sl_mongdoi}, thực tế {sl_thucte}"
+    filename = os.path.join("tests", "report", "Timkiem_Report.xlsx")
+    assert expected.strip() == actual.strip(), f"Kết quả mong đợi {sl_mongdoi}, thực tế {sl_thucte}"
+    assert sl_thucte == sl_mongdoi, f"Số sản phẩm mong đợi {sl_mongdoi}, thực tế {sl_thucte}"
 
     status = "PASS"
-    report(os.path.join("tests", "report", "Timkiem_Report.xlsx"),
-           [test_time, tukhoa, expected, result, sl_mongdoi, sl_thucte, status])
+    report(filename,[test_time, tukhoa, expected, actual, sl_mongdoi, sl_thucte, status])
     driver.quit()

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/KTTD_Teelab.iml" filepath="$PROJECT_DIR$/.idea/KTTD_Teelab.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Teelab.iml" filepath="$PROJECT_DIR$/.idea/Teelab.iml" />
     </modules>
   </component>
 </project>

@@ -1,6 +1,7 @@
 import time
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.base import Base
 
@@ -16,6 +17,8 @@ class Dangnhap(Base):
 
     def dangnhap(self, email, matkhau):
 
+        self.driver.find_element(*self.icon_taikhoan).click()
+
         Email = self.driver.find_element(*self.nhap_email)
         Email.clear()
         Email.send_keys(email if email else "")
@@ -29,37 +32,34 @@ class Dangnhap(Base):
 
     def get_thongbao(self):
         try:
-            # 1. Ưu tiên thông báo thành công
             try:
-                success = self.driver.find_element(*self.thanhcong)
-                if success.is_displayed():
-                    return success.text.strip()
+                dn_thanhcong = self.driver.find_element(*self.thanhcong)
+                if dn_thanhcong.is_displayed() and dn_thanhcong.text.strip():
+                    return dn_thanhcong.text.strip()
             except:
                 pass
 
-            # 2. Nếu không thành công thì check lỗi server hiển thị
             try:
                 loi = self.driver.find_element(*self.tb_loi)
-                if loi.is_displayed():
+                if loi.is_displayed() and loi.text.strip():
                     return loi.text.strip()
             except:
                 pass
 
-            # 3. Nếu không có 2 cái trên thì check lỗi HTML5
             try:
                 Email = self.driver.find_element(*self.nhap_email)
                 Matkhau = self.driver.find_element(*self.nhap_matkhau)
 
                 email_msg = self.driver.execute_script("return arguments[0].validationMessage;", Email)
-                pass_msg = self.driver.execute_script("return arguments[0].validationMessage;", Matkhau)
-
-                if email_msg:
+                if email_msg and email_msg.strip():
                     return email_msg.strip()
-                elif pass_msg:
-                    return pass_msg.strip()
-            except:
-                pass
 
-            return None
+                mk_msg = self.driver.execute_script("return arguments[0].validationMessage;", Matkhau)
+                if mk_msg and mk_msg.strip():
+                    return mk_msg.strip()
+            except Exception as e:
+                print("Không lấy được validationMessage:", e)
+
+            return ""
         except:
-            return None
+            return ""

@@ -5,10 +5,10 @@ import pytest
 from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
-from pages.dangnhap_page import Dangnhap
+from pages.dangky_page import Dangky
 from utils.read import read
 
-test_data = read("Teelab.xlsx", sheet_name="Dangnhap")
+test_data = read("Teelab.xlsx", sheet_name="Dangky")
 report_created = False
 
 def report(filename, row_data):
@@ -19,8 +19,11 @@ def report(filename, row_data):
         ws = wb.active
         ws.append([
             "Time",
+            "Ho",
+            "Ten",
             "Email",
-            "Password",
+            "Sdt",
+            "Matkhau",
             "Expected",
             "Actual",
             "Status"
@@ -33,22 +36,22 @@ def report(filename, row_data):
     ws.append(row_data)
     wb.save(filename)
 
-@pytest.mark.parametrize("email, matkhau, expected", test_data)
-def test_dangnhap(email, matkhau, expected):
+@pytest.mark.parametrize("ho, ten, email, sdt, matkhau, expected", test_data)
+def test_dangky(ho, ten, email, sdt, matkhau, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://teelab.vn/")
-    dangnhap_page = Dangnhap(driver)
+    dangky_page = Dangky(driver)
 
-    dangnhap_page.dangnhap(email, matkhau)
+    dangky_page.dangky(ho, ten, email, sdt, matkhau)
 
-    actual = dangnhap_page.get_thongbao()
+    actual = dangky_page.get_thongbao()
 
     print(f"Kết quả mong đợi: {expected}")
     print(f"Kết quả thực tế: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "report", "Dangnhap_Report.xlsx")
+    filename = os.path.join("tests", "report", "Dangky_Report.xlsx")
 
     try:
         assert actual.strip() == expected.strip(), f"Expected: {expected}, Actual: {actual}"
@@ -58,5 +61,5 @@ def test_dangnhap(email, matkhau, expected):
         raise
 
     finally:
-        report(filename, [test_time, email, matkhau, expected, actual, status])
+        report(filename, [test_time, ho, ten, email, matkhau, expected, actual, status])
         driver.quit()

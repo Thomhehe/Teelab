@@ -13,4 +13,3 @@ def read(file_path, sheet_name):
         data.append(tuple(row_data))
     workbook.close()
     return data
-
