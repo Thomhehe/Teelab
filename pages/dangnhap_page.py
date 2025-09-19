@@ -1,6 +1,5 @@
 import time
 
-from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 from pages.base import Base
@@ -12,7 +11,7 @@ class Dangnhap(Base):
     nhap_matkhau = (By.ID, "customer_password")
     dangnhap_btn = (By.CSS_SELECTOR, ".btn.btn-style.btn_50")
 
-    tb_loi = (By.CSS_SELECTOR, "span.form-signup")
+    tb_loi = (By.CSS_SELECTOR, ".form-signup")
     thanhcong = (By.CSS_SELECTOR, "p:has(span[style*='color:#ef4339'])")
 
     def dangnhap(self, email, matkhau):
@@ -29,27 +28,38 @@ class Dangnhap(Base):
         time.sleep(1)
 
     def get_thongbao(self):
-
-        Email = self.driver.find_element(*self.nhap_email)
-        Matkhau = self.driver.find_element(*self.nhap_matkhau)
-
-        if Email.get_attribute("validationMessage"):
-            return Email.get_attribute("validationMessage")
-        if Matkhau.get_attribute("validationMessage"):
-            return Matkhau.get_attribute("validationMessage")
-
         try:
-            loi = self.driver.find_element(*self.tb_loi)
-            if loi.is_displayed():
-                return loi.text.strip()
-        except NoSuchElementException:
-            pass
+            # 1. Ưu tiên thông báo thành công
+            try:
+                success = self.driver.find_element(*self.thanhcong)
+                if success.is_displayed():
+                    return success.text.strip()
+            except:
+                pass
 
-        try:
-            success = self.driver.find_element(*self.thanhcong)
-            if success.is_displayed():
-                return success.text.strip()
-        except NoSuchElementException:
-            pass
+            # 2. Nếu không thành công thì check lỗi server hiển thị
+            try:
+                loi = self.driver.find_element(*self.tb_loi)
+                if loi.is_displayed():
+                    return loi.text.strip()
+            except:
+                pass
 
-        return ""
+            # 3. Nếu không có 2 cái trên thì check lỗi HTML5
+            try:
+                Email = self.driver.find_element(*self.nhap_email)
+                Matkhau = self.driver.find_element(*self.nhap_matkhau)
+
+                email_msg = self.driver.execute_script("return arguments[0].validationMessage;", Email)
+                pass_msg = self.driver.execute_script("return arguments[0].validationMessage;", Matkhau)
+
+                if email_msg:
+                    return email_msg.strip()
+                elif pass_msg:
+                    return pass_msg.strip()
+            except:
+                pass
+
+            return None
+        except:
+            return None

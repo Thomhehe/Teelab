@@ -8,7 +8,6 @@ from selenium import webdriver
 from pages.dangnhap_page import Dangnhap
 from utils.read import read
 
-test_data = read("Teelab.xlsx", sheet_name="Dangnhap")
 report_created = False
 
 def report(filename, row_data):
@@ -33,7 +32,10 @@ def report(filename, row_data):
     ws.append(row_data)
     wb.save(filename)
 
-@pytest.mark.parametrize("email, matkhau, expected", test_data)
+def get_data():
+    return read("Teelab.xlsx", sheet_name="Dangnhap")
+
+@pytest.mark.parametrize("email, matkhau, expected", get_data())
 def test_dangnhap(email, matkhau, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
