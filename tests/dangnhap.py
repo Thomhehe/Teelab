@@ -10,6 +10,7 @@ from utils.read import read
 
 test_data = read("Teelab.xlsx", sheet_name="Dangnhap")
 report_created = False
+ids = [f"{i+1}. ({row[2]})" for i, row in enumerate(test_data)]
 
 def report(filename, row_data):
     global report_created
@@ -33,7 +34,7 @@ def report(filename, row_data):
     ws.append(row_data)
     wb.save(filename)
 
-@pytest.mark.parametrize("email, matkhau, expected", test_data)
+@pytest.mark.parametrize("email, matkhau, expected", test_data, ids=ids)
 def test_dangnhap(email, matkhau, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
@@ -42,13 +43,13 @@ def test_dangnhap(email, matkhau, expected):
 
     dangnhap_page.dangnhap(email, matkhau)
 
-    actual = dangnhap_page.get_thongbao()
+    actual = dangnhap_page.lay_thongbao()
 
     print(f"Kết quả mong đợi: {expected}")
     print(f"Kết quả thực tế: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "report", "Dangnhap_Report.xlsx")
+    filename = os.path.join("tests", "reports", "Dangnhap_Report.xlsx")
 
     try:
         assert actual.strip() == expected.strip(), f"Expected: {expected}, Actual: {actual}"

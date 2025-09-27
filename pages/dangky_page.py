@@ -4,7 +4,6 @@ from selenium.webdriver.common.by import By
 
 from pages.base import Base
 
-
 class Dangky(Base):
 
     icon_taikhoan = (By.CSS_SELECTOR, ".user-header.btn-head.d-inline-block.ml-xl-1")
@@ -20,33 +19,18 @@ class Dangky(Base):
 
     def dangky(self, ho, ten, email, sdt, matkhau):
 
-        self.driver.find_element(*self.icon_taikhoan).click()
-        self.driver.find_element(*self.chon_dangky).click()
+        self.click(self.icon_taikhoan)
+        self.click(self.chon_dangky)
 
-        Ho = self.driver.find_element(*self.nhap_ho)
-        Ho.clear()
-        Ho.send_keys(ho if ho else "")
+        self.type_text(self.nhap_ho, ho or "")
+        self.type_text(self.nhap_ten, ten or "")
+        self.type_text(self.nhap_email, email or "")
+        self.type_text(self.nhap_sdt, sdt or "")
+        self.type_text(self.nhap_matkhau, matkhau or "")
 
-        Ten = self.driver.find_element(*self.nhap_ten)
-        Ten.clear()
-        Ten.send_keys(ten if ten else "")
+        self.click(self.dangky_btn)
 
-        Email = self.driver.find_element(*self.nhap_email)
-        Email.clear()
-        Email.send_keys(email if email else "")
-
-        Sdt = self.driver.find_element(*self.nhap_sdt)
-        Sdt.clear()
-        Sdt.send_keys(sdt if sdt else "")
-
-        Matkhau = self.driver.find_element(*self.nhap_matkhau)
-        Matkhau.clear()
-        Matkhau.send_keys(matkhau if matkhau else "")
-
-        self.driver.find_element(*self.dangky_btn).click()
-        time.sleep(1)
-
-    def get_thongbao(self):
+    def lay_thongbao(self):
         try:
             try:
                 current_url = self.driver.current_url
@@ -56,9 +40,7 @@ class Dangky(Base):
                 pass
 
             try:
-                loi = self.driver.find_element(*self.tb_loi)
-                if loi.is_displayed() and loi.text.strip():
-                    return loi.text.strip()
+                return self.get_text(self.tb_loi).strip()
             except:
                 pass
 

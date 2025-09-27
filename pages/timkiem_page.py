@@ -28,25 +28,25 @@ class Timkiem(Base):
         self.type_text(self.nhap_tukhoa, tukhoa)
         self.driver.find_element(*self.nhap_tukhoa).send_keys(Keys.RETURN)
 
-    def get_ketqua(self):
-        try:
-            return self.get_text(self.ketqua).strip()
-        except:
-            return ""
+    def lay_ketqua(self):
+        return self.get_text(self.ketqua).strip()
 
-    def get_slthucte(self):
+    def lay_slthucte(self):
         wait = WebDriverWait(self.driver, 10)
-        all_products = set()
+        ds_sanpham = set()
 
         while True:
             # Lấy danh sách sản phẩm hiện tại
             sanphams = self.driver.find_elements(*self.sanpham)
 
+            # Duyệt qua từng sản phẩm trong trang
             for sp in sanphams:
                 try:
-                    product_key = sp.get_attribute("href") or sp.text
-                    if product_key:
-                        all_products.add(product_key.strip())
+                    # Lấy ra khóa duy nhất cho sản phẩm
+                    tukhoa = sp.get_attribute("href") or sp.text
+                    if tukhoa:
+                        # Thêm vào danh sách sản phẩm - bỏ sản phẩm trùng lặp
+                        ds_sanpham.add(tukhoa.strip())
                 except Exception:
                     continue
 
@@ -64,10 +64,10 @@ class Timkiem(Base):
 
             wait.until(EC.presence_of_all_elements_located(self.sanpham))
 
-        return len(all_products) if all_products else 0
+        return len(ds_sanpham) if ds_sanpham else 0
 
-    def get_slmongdoi(self):
-
-        result = self.get_ketqua()
+    def lay_slmongdoi(self):
+        result = self.lay_ketqua()
+        # Duyệt từng ký tự, chỉ giữ lại ký tự là số
         digits = "".join(filter(str.isdigit, result))
         return int(digits) if digits else 0

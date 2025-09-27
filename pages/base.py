@@ -4,7 +4,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 class Base:
     def __init__(self, driver):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
+        self.wait = WebDriverWait(driver, 5)
 
     #đợi đến khi element click được
     def click(self, locator):

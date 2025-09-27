@@ -25,9 +25,9 @@ def report(filename, row_data):
             "Tình thành",
             "Quận huyện",
             "Phường xã",
-            "Expected",
-            "Actual",
-            "Status"
+            "Kết quả mong đợi",
+            "Kết quả thực tế",
+            "Trạng thái"
         ])
         wb.save(filename)
         report_created = True
@@ -46,16 +46,20 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
     dathang_page = Dathang(driver)
     dathang_page.dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa)
 
-    actual = dathang_page.get_thongbao()
+    actual = dathang_page.lay_thongbao()
 
     print(f"Kết quả mong đợi: {expected}")
     print(f"Kết quả thực tế: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "report", "Dathang_Report.xlsx")
+    filename = os.path.join("tests", "reports", "Dathang_Report.xlsx")
 
-    assert expected.strip() == actual.strip(), f"Thông báo mong đợi {expected}, thực tế {actual}"
-    status = "PASS"
-    report(filename, [test_time, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected, actual, status])
-
-    driver.quit()
+    try:
+        assert expected.strip() == actual.strip(), f"Thông báo mong đợi {expected}, thực tế {actual}"
+        status = "PASS"
+    except AssertionError:
+        status = "FAIL"
+        raise
+    finally:
+        report(filename, [test_time, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected, actual, status])
+        driver.quit()

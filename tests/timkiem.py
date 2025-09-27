@@ -9,6 +9,7 @@ from utils.read import read
 
 test_data = read("Teelab.xlsx", sheet_name="Timkiem")
 report_created = False
+ids = [f"{i+1}. ({row[0]})" for i, row in enumerate(test_data)]
 
 def report(filename, row_data):
     global report_created
@@ -21,8 +22,8 @@ def report(filename, row_data):
             "Keyword",
             "Expected",
             "Actual",
-            "Expected quantity",
-            "Actual quantity",
+            "Expected Quantity",
+            "Actual Quantity",
             "Status"
         ])
         wb.save(filename)
@@ -33,7 +34,7 @@ def report(filename, row_data):
     ws.append(row_data)
     wb.save(filename)
 
-@pytest.mark.parametrize("tukhoa, expected", test_data)
+@pytest.mark.parametrize("tukhoa, expected", test_data, ids=ids)
 def test_timkiem(tukhoa, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
@@ -41,9 +42,9 @@ def test_timkiem(tukhoa, expected):
     timkiem_page = Timkiem(driver)
 
     timkiem_page.tim(tukhoa)
-    actual = timkiem_page.get_ketqua()
-    sl_mongdoi = timkiem_page.get_slmongdoi()
-    sl_thucte = timkiem_page.get_slthucte()
+    actual = timkiem_page.lay_ketqua()
+    sl_mongdoi = timkiem_page.lay_slmongdoi()
+    sl_thucte = timkiem_page.lay_slthucte()
 
     print(f"Từ khóa: {tukhoa}")
     print(f"Kết quả mong đợi: {expected}")
@@ -52,10 +53,15 @@ def test_timkiem(tukhoa, expected):
     print(f"Số sản phẩm thực tế: {sl_thucte}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "report", "Timkiem_Report.xlsx")
-    assert expected.strip() == actual.strip(), f"Kết quả mong đợi {sl_mongdoi}, thực tế {sl_thucte}"
-    assert sl_thucte == sl_mongdoi, f"Số sản phẩm mong đợi {sl_mongdoi}, thực tế {sl_thucte}"
+    filename = os.path.join("tests", "reports", "Timkiem_Report.xlsx")
 
-    status = "PASS"
-    report(filename,[test_time, tukhoa, expected, actual, sl_mongdoi, sl_thucte, status])
-    driver.quit()
+    try:
+        assert expected.strip() == actual.strip(), f"Kết quả mong đợi {expected}, thực tế {actual}"
+        assert sl_thucte == sl_mongdoi, f"Số sản phẩm mong đợi {sl_mongdoi}, thực tế {sl_thucte}"
+        status = "PASS"
+    except AssertionError:
+        status = "FAIL"
+        raise
+    finally:
+        report(filename, [test_time, tukhoa, expected, actual, sl_mongdoi, sl_thucte, status])
+        driver.quit()

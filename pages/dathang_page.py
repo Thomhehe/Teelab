@@ -2,7 +2,6 @@ import time
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.base import Base
 
@@ -26,7 +25,6 @@ class Dathang(Base):
 
     def dathang (self, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa):
 
-        self.click(self.chon_sanpham)
         self.click(self.muahang_btn)
         self.click(self.thanhtoan_btn)
 
@@ -58,7 +56,7 @@ class Dathang(Base):
 
         time.sleep(2)
 
-    def get_thongbao (self):
+    def lay_thongbao (self):
         try:
             try:
                 loi = self.driver.find_element(*self.tb_loi)

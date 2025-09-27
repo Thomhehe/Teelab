@@ -1,5 +1,3 @@
-import time
-
 from selenium.webdriver.common.by import By
 
 from pages.base import Base
@@ -16,32 +14,26 @@ class Dangnhap(Base):
 
     def dangnhap(self, email, matkhau):
 
-        self.driver.find_element(*self.icon_taikhoan).click()
+        self.click(self.icon_taikhoan)
 
-        Email = self.driver.find_element(*self.nhap_email)
-        Email.clear()
-        Email.send_keys(email if email else "")
+        self.type_text(self.nhap_email, email or "")
+        self.type_text(self.nhap_matkhau, matkhau or "")
 
-        Matkhau = self.driver.find_element(*self.nhap_matkhau)
-        Matkhau.clear()
-        Matkhau.send_keys(matkhau if matkhau else "")
+        self.click(self.dangnhap_btn)
 
-        self.driver.find_element(*self.dangnhap_btn).click()
-        time.sleep(1)
-
-    def get_thongbao(self):
+    def lay_thongbao(self):
         try:
             try:
-                dn_thanhcong = self.driver.find_element(*self.thanhcong)
-                if dn_thanhcong.is_displayed() and dn_thanhcong.text.strip():
-                    return dn_thanhcong.text.strip()
+                dn_thanhcong = self.get_text(self.thanhcong)
+                if dn_thanhcong:
+                    return dn_thanhcong.strip()
             except:
                 pass
 
             try:
-                loi = self.driver.find_element(*self.tb_loi)
-                if loi.is_displayed() and loi.text.strip():
-                    return loi.text.strip()
+                loi = self.get_text(self.tb_loi)
+                if loi:
+                    return loi.strip()
             except:
                 pass
 
