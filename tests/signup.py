@@ -5,10 +5,11 @@ import pytest
 from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
-from pages.dangky_page import Dangky
-from utils.read import read
+from pages.login_page import Login
+from pages.signup_page import Signup
+from utils.data_untils import load_excel_data
 
-test_data = read("Teelab.xlsx", sheet_name="Dangky")
+test_data = load_excel_data("Teelab.xlsx", sheetname="Signup")
 report_created = False
 
 ids = [f"{i+1}. ({row[5]})" for i, row in enumerate(test_data)]
@@ -38,22 +39,30 @@ def report(filename, row_data):
     ws.append(row_data)
     wb.save(filename)
 
-@pytest.mark.parametrize("ho, ten, email, sdt, matkhau, expected", test_data, ids=ids)
-def test_dangky(ho, ten, email, sdt, matkhau, expected):
+@pytest.mark.parametrize("lastname, name, email, phone, password, expected", test_data, ids=ids)
+def test_signup(lastname, name, email, phone, password, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://teelab.vn/")
-    dangky_page = Dangky(driver)
+    login_page = Login(driver)
+    signup_page = Signup(driver)
 
-    dangky_page.dangky(ho, ten, email, sdt, matkhau)
+    login_page.account()
+    signup_page.signup_select()
+    signup_page.lastname_enter(lastname)
+    signup_page.name_enter(name)
+    signup_page.email_enter(email)
+    signup_page.phone_enter(phone)
+    signup_page.password_enter(password)
+    signup_page.signup_enter()
 
-    actual = dangky_page.lay_thongbao()
+    actual = signup_page.get_result()
 
-    print(f"Kết quả mong đợi: {expected}")
-    print(f"Kết quả thực tế: {actual}")
+    print(f"Expected: {expected}")
+    print(f"Actual: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "reports", "Dangky_Report.xlsx")
+    filename = os.path.join("tests", "reports", "Signup_Report.xlsx")
 
     try:
         assert actual.strip() == expected.strip(), f"Expected: {expected}, Actual: {actual}"
@@ -63,5 +72,5 @@ def test_dangky(ho, ten, email, sdt, matkhau, expected):
         raise
 
     finally:
-        report(filename, [test_time, ho, ten, email, matkhau, expected, actual, status])
+        report(filename, [test_time, lastname, name, email, phone, password, expected, actual, status])
         driver.quit()

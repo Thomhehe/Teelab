@@ -5,10 +5,10 @@ import pytest
 from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
-from pages.dangnhap_page import Dangnhap
-from utils.read import read
+from pages.login_page import Login
+from utils.data_untils import read
 
-test_data = read("Teelab.xlsx", sheet_name="Dangnhap")
+test_data = read("Teelab.xlsx", sheetname="Login")
 report_created = False
 ids = [f"{i+1}. ({row[2]})" for i, row in enumerate(test_data)]
 
@@ -34,22 +34,25 @@ def report(filename, row_data):
     ws.append(row_data)
     wb.save(filename)
 
-@pytest.mark.parametrize("email, matkhau, expected", test_data, ids=ids)
-def test_dangnhap(email, matkhau, expected):
+@pytest.mark.parametrize("email, password, expected", test_data, ids=ids)
+def test_dangnhap(email, password, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://teelab.vn/")
-    dangnhap_page = Dangnhap(driver)
+    login_page = Login(driver)
 
-    dangnhap_page.dangnhap(email, matkhau)
+    login_page.account()
+    login_page.email_enter(email)
+    login_page.password_enter(password)
+    login_page.login()
 
-    actual = dangnhap_page.lay_thongbao()
+    actual = login_page.get_result()
 
     print(f"Kết quả mong đợi: {expected}")
     print(f"Kết quả thực tế: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "reports", "Dangnhap_Report.xlsx")
+    filename = os.path.join("tests", "reports", "Login_Report.xlsx")
 
     try:
         assert actual.strip() == expected.strip(), f"Expected: {expected}, Actual: {actual}"
@@ -59,5 +62,5 @@ def test_dangnhap(email, matkhau, expected):
         raise
 
     finally:
-        report(filename, [test_time, email, matkhau, expected, actual, status])
+        report(filename, [test_time, email, password, expected, actual, status])
         driver.quit()

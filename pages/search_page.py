@@ -9,65 +9,65 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from pages.base import Base
 
-class Timkiem(Base):
+class Search(Base):
 
-    icon_timkiem = (By.CSS_SELECTOR, "a[title='Tìm kiếm']")
-    nhap_tukhoa = (By.NAME, "query")
-    ketqua = (By.CSS_SELECTOR, ".title-head.title_search")
-    sanpham = (By.CSS_SELECTOR, "div.col-6.col-md-4.col-lg-3")
-    chuyentrang_icon = (By.CSS_SELECTOR, "li.page-item.hidden-xs > a.page-link.rounded > svg.fa-angle-right")
+    icon_search = (By.CSS_SELECTOR, "a[title='Tìm kiếm']")
+    keyword_input = (By.NAME, "query")
+    result = (By.CSS_SELECTOR, ".title-head.title_search")
+    product = (By.CSS_SELECTOR, "div.col-6.col-md-4.col-lg-3")
+    next_icon = (By.CSS_SELECTOR, "li.page-item.hidden-xs > a.page-link.rounded > svg.fa-angle-right")
 
-    def tim(self, tukhoa):
+    def search(self, keyword):
         icon = WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located(self.icon_timkiem)
+            EC.presence_of_element_located(self.icon_search)
         )
         self.driver.execute_script("arguments[0].classList.remove('d-none')", icon)
         self.driver.execute_script("arguments[0].click();", icon)
         time.sleep(1)
 
-        self.type_text(self.nhap_tukhoa, tukhoa)
-        self.driver.find_element(*self.nhap_tukhoa).send_keys(Keys.RETURN)
+        self.type_text(self.keyword_input, keyword)
+        self.driver.find_element(*self.keyword_input).send_keys(Keys.RETURN)
 
-    def lay_ketqua(self):
-        return self.get_text(self.ketqua).strip()
+    def get_result(self):
+        return self.get_text(self.result).strip()
 
-    def lay_slthucte(self):
+    def get_quantity(self):
         wait = WebDriverWait(self.driver, 10)
-        ds_sanpham = set()
+        product_list = set()
 
         while True:
             # Lấy danh sách sản phẩm hiện tại
-            sanphams = self.driver.find_elements(*self.sanpham)
+            products = self.driver.find_elements(*self.product)
 
             # Duyệt qua từng sản phẩm trong trang
-            for sp in sanphams:
+            for prd in products:
                 try:
                     # Lấy ra khóa duy nhất cho sản phẩm
-                    tukhoa = sp.get_attribute("href") or sp.text
-                    if tukhoa:
+                    keyword = prd.get_attribute("href") or prd.text
+                    if keyword:
                         # Thêm vào danh sách sản phẩm - bỏ sản phẩm trùng lặp
-                        ds_sanpham.add(tukhoa.strip())
+                        product_list.add(keyword.strip())
                 except Exception:
                     continue
 
             try:
                 # Tìm nút chuyển trang (icon SVG) → lấy thẻ <a> cha để click
-                chuyentrang_btn_icon = self.driver.find_element(*self.chuyentrang_icon)
-                chuyentrang_btn = chuyentrang_btn_icon.find_element(By.XPATH, "./..")
+                next_btn_icon = self.driver.find_element(*self.next_icon)
+                next_btn = next_btn_icon.find_element(By.XPATH, "./..")
             except NoSuchElementException:
                 break  # Hết trang
 
             try:
-                chuyentrang_btn.click()
+                next_btn.click()
             except ElementClickInterceptedException:
-                self.driver.execute_script("arguments[0].click();", chuyentrang_btn)
+                self.driver.execute_script("arguments[0].click();", next_btn)
 
-            wait.until(EC.presence_of_all_elements_located(self.sanpham))
+            wait.until(EC.presence_of_all_elements_located(self.product))
 
-        return len(ds_sanpham) if ds_sanpham else 0
+        return len(product_list) if product_list else 0
 
-    def lay_slmongdoi(self):
-        result = self.lay_ketqua()
+    def get_quantity_expected(self):
+        result = self.get_result()
         # Duyệt từng ký tự, chỉ giữ lại ký tự là số
         digits = "".join(filter(str.isdigit, result))
         return int(digits) if digits else 0
