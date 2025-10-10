@@ -6,9 +6,9 @@ from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
 from pages.login_page import Login
-from utils.data_untils import read
+from utils.data_untils import load_excel_data
 
-test_data = read("Teelab.xlsx", sheetname="Login")
+test_data = load_excel_data("Teelab.xlsx", sheetname="Login")
 report_created = False
 ids = [f"{i+1}. ({row[2]})" for i, row in enumerate(test_data)]
 

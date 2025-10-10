@@ -6,9 +6,9 @@ from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
 from pages.dathang_page import Dathang
-from utils.data_untils import read
+from utils.data_untils import load_excel_data
 
-test_data = read("Teelab.xlsx", sheet_name="Dathang")
+test_data = load_excel_data("Teelab.xlsx", sheetname="Dathang")
 report_created = False
 
 def report(filename, row_data):
