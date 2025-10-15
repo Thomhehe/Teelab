@@ -35,7 +35,7 @@ def report(filename, row_data):
     wb.save(filename)
 
 @pytest.mark.parametrize("email, password, expected", test_data, ids=ids)
-def test_dangnhap(email, password, expected):
+def test_login(email, password, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://teelab.vn/")

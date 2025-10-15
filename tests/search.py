@@ -35,7 +35,7 @@ def report(filename, row_data):
     wb.save(filename)
 
 @pytest.mark.parametrize("keyword, expected", test_data, ids=ids)
-def test_timkiem(keyword, expected):
+def test_search(keyword, expected):
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://teelab.vn/")
