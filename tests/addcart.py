@@ -5,6 +5,7 @@ from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
 from pages.addcart_page import Cart
+from utils.screenshot_utils import take_screenshot
 
 report_created = False
 
@@ -24,7 +25,8 @@ def report(filename, row_data):
             "Color/Size_actual",
             "Total_expected",
             "Total_actual",
-            "Status"
+            "Status",
+            "Screenshot"
         ])
         wb.save(filename)
         report_created = True
@@ -62,6 +64,7 @@ def test_addcart():
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename = os.path.join("tests", "reports", "AddCart_Report.xlsx")
+    screenshot_path = ""
 
     try:
         assert expected == actual, f"Expected{expected}, actual {actual}"
@@ -69,7 +72,8 @@ def test_addcart():
         status = "PASS"
     except AssertionError as e:
         status = "FAIL"
+        screenshot_path = take_screenshot(driver, f"addcartfail_{details['name']}")
         raise e
     finally:
-        report(filename, [test_time, details['name'], cart['name'], details['price'], cart['price'],details_color_size, cart['color_size'], total_expected, total_actual, status])
+        report(filename, [test_time, details['name'], cart['name'], details['price'], cart['price'],details_color_size, cart['color_size'], total_expected, total_actual, status, screenshot_path])
         driver.quit()

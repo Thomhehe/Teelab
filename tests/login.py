@@ -7,6 +7,7 @@ from selenium import webdriver
 
 from pages.login_page import Login
 from utils.data_untils import load_excel_data
+from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Login")
 report_created = False
@@ -24,7 +25,8 @@ def report(filename, row_data):
             "Password",
             "Expected",
             "Actual",
-            "Status"
+            "Status",
+            "Screenshot"
         ])
         wb.save(filename)
         report_created = True
@@ -53,14 +55,16 @@ def test_login(email, password, expected):
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename = os.path.join("tests", "reports", "Login_Report.xlsx")
+    screenshot_path = ""
 
     try:
         assert actual.strip() == expected.strip(), f"Expected: {expected}, Actual: {actual}"
         status = "PASS"
     except AssertionError:
         status = "FAIL"
+        screenshot_path = take_screenshot(driver, f"loginfail_{email}")
         raise
 
     finally:
-        report(filename, [test_time, email, password, expected, actual, status])
+        report(filename, [test_time, email, password, expected, actual, status, screenshot_path])
         driver.quit()

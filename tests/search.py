@@ -6,6 +6,7 @@ from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 from pages.search_page import Search
 from utils.data_untils import load_excel_data
+from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Search")
 report_created = False
@@ -24,7 +25,8 @@ def report(filename, row_data):
             "Actual",
             "Expected Quantity",
             "Actual Quantity",
-            "Status"
+            "Status",
+            "Screenshot"
         ])
         wb.save(filename)
         report_created = True
@@ -54,6 +56,7 @@ def test_search(keyword, expected):
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename = os.path.join("tests", "reports", "Search_Report.xlsx")
+    screenshot_path = ""
 
     try:
         assert expected.strip() == actual.strip(), f"Expected {expected}, Actual {actual}"
@@ -61,7 +64,8 @@ def test_search(keyword, expected):
         status = "PASS"
     except AssertionError:
         status = "FAIL"
+        screenshot_path = take_screenshot(driver, name_prefix=f"search_{keyword}")
         raise
     finally:
-        report(filename, [test_time, keyword, expected, actual, quantity_expected, quantity_actual, status])
+        report(filename, [test_time, keyword, expected, actual, quantity_expected, quantity_actual, status, screenshot_path])
         driver.quit()

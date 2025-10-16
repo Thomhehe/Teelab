@@ -8,6 +8,8 @@ from pages.editcart_page import EditCart
 from utils.data_untils import load_excel_data
 import pytest
 
+from utils.screenshot_utils import take_screenshot
+
 test_data = load_excel_data("Teelab.xlsx", sheetname="EditQuantity")
 
 formatted_data = []
@@ -36,7 +38,8 @@ def report(filename, row_data):
             "Actual_Qty",
             "Expected_Total",
             "Actual_Total",
-            "Status"
+            "Status",
+            "Screenshot"
         ])
         wb.save(filename)
         report_created = True
@@ -82,15 +85,19 @@ def test_editcart(action, value):
 
     new_qty = editcart_page.get_quantity()
     new_total = editcart_page.get_total_amount()
+    screenshot_path = ""
 
     try:
         actual_total, expected_total = editcart_page.verify_total_amount()
         status = "PASS" if new_qty == expected_qty and actual_total == expected_total else "FAIL"
+        if status == "FAIL":
+            screenshot_path = take_screenshot(driver, name_prefix=f"editcart_{action}")
     except AssertionError as e:
         print(f"Lỗi xác minh tổng tiền: {e}")
         actual_total = new_total
         expected_total = editcart_page.calculate_total_amount()
         status = "FAIL"
+        screenshot_path = take_screenshot(driver, name_prefix=f"editcart_{action}")
 
     print(f"[{action}] Expected quantity={expected_qty}, Actual quantity={new_qty}")
     print(f"[{action}] Expected total={expected_total}, Actual total={actual_total}")
@@ -106,7 +113,8 @@ def test_editcart(action, value):
         new_qty,
         expected_total,
         actual_total,
-        status
+        status,
+        screenshot_path
     ])
 
     driver.quit()

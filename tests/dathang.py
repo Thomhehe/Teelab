@@ -7,6 +7,7 @@ from selenium import webdriver
 
 from pages.dathang_page import Dathang
 from utils.data_untils import load_excel_data
+from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Dathang")
 report_created = False
@@ -27,7 +28,8 @@ def report(filename, row_data):
             "Phường xã",
             "Kết quả mong đợi",
             "Kết quả thực tế",
-            "Trạng thái"
+            "Trạng thái",
+            "Screenshot"
         ])
         wb.save(filename)
         report_created = True
@@ -53,13 +55,15 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename = os.path.join("tests", "reports", "Dathang_Report.xlsx")
+    screenshot_path = ""
 
     try:
         assert expected.strip() == actual.strip(), f"Thông báo mong đợi {expected}, thực tế {actual}"
         status = "PASS"
     except AssertionError:
         status = "FAIL"
+        screenshot_path = take_screenshot(driver, f"dathangfail_{hoten}")
         raise
     finally:
-        report(filename, [test_time, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected, actual, status])
+        report(filename, [test_time, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected, actual, status, screenshot_path])
         driver.quit()
