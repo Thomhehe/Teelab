@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 
 from pages.base import Base
 
-
 class Cart(Base):
 
     product_select = (By.CSS_SELECTOR, ".product-thumbnail.position-relative")
