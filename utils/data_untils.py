@@ -1,5 +1,7 @@
 import csv
 import json
+import os
+
 import openpyxl
 
 def load_csv_data(filepath):
@@ -11,7 +13,15 @@ def load_json_data(filepath):
     with open(filepath, encoding='utf-8') as jsonfile:
         return json.load(jsonfile)
 
-def load_excel_data(filepath, sheetname=None):
+def load_excel_data(filename, sheetname=None):
+    # Đường dẫn tuyệt đối tới file Teelab.xlsx ở D:\PyCharm\Teelab
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # D:\PyCharm\Teelab\teelab
+    project_root = os.path.abspath(os.path.join(base_dir))
+    filepath = os.path.join(project_root, "Teelab.xlsx")
+
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"Không tìm thấy file Excel: {filepath}")
+
     workbook = openpyxl.load_workbook(filepath)
 
     if sheetname:

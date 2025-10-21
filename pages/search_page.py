@@ -65,9 +65,3 @@ class Search(Base):
             wait.until(EC.presence_of_all_elements_located(self.product))
 
         return len(product_list) if product_list else 0
-
-    def get_quantity_expected(self):
-        result = self.get_result()
-        # Duyệt từng ký tự, chỉ giữ lại ký tự là số
-        digits = "".join(filter(str.isdigit, result))
-        return int(digits) if digits else 0

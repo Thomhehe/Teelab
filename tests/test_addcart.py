@@ -7,12 +7,12 @@ from selenium import webdriver
 from pages.addcart_page import Cart
 from utils.screenshot_utils import take_screenshot
 
-report_created = False
+filename_report = r"D:\PyCharm\Teelab\tests\reports\AddCart_Report.xlsx"
+if os.path.exists(filename_report):
+    os.remove(filename_report)
 
 def report(filename, row_data):
-    global report_created
-    if not report_created:
-
+    if not os.path.exists(filename):
         wb = Workbook()
         ws = wb.active
         ws.append([
@@ -28,11 +28,10 @@ def report(filename, row_data):
             "Status",
             "Screenshot"
         ])
-        wb.save(filename)
-        report_created = True
+    else:
+        wb = load_workbook(filename)
+        ws = wb.active
 
-    wb = load_workbook(filename)
-    ws = wb.active
     ws.append(row_data)
     wb.save(filename)
 
@@ -52,7 +51,7 @@ def test_addcart():
     expected = f"{details['name']} | {details['price']} | {details_color_size}".strip()
     actual = f"{cart['name']} | {cart['price']} | {cart['color_size']}".strip()
 
-    print(f"Expected: {expected}")
+    print(f"\nExpected: {expected}")
     print(f"Actual: {actual}")
 
     # --- Tính tổng tiền mong đợi & lấy tổng tiền thực tế ---
@@ -63,7 +62,6 @@ def test_addcart():
     print(f"Total_actual: {total_actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "reports", "AddCart_Report.xlsx")
     screenshot_path = ""
 
     try:
@@ -75,5 +73,5 @@ def test_addcart():
         screenshot_path = take_screenshot(driver, f"addcartfail_{details['name']}")
         raise e
     finally:
-        report(filename, [test_time, details['name'], cart['name'], details['price'], cart['price'],details_color_size, cart['color_size'], total_expected, total_actual, status, screenshot_path])
+        report(filename_report, [test_time, details['name'], cart['name'], details['price'], cart['price'],details_color_size, cart['color_size'], total_expected, total_actual, status, screenshot_path])
         driver.quit()

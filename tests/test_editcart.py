@@ -23,11 +23,12 @@ for i, row in enumerate(test_data):
     except Exception as e:
         print(f"Bỏ qua dòng dữ liệu lỗi: {row} ({e})")
 
-report_created = False
+filename_report = r"D:\PyCharm\Teelab\tests\reports\EditCart_Report.xlsx"
+if os.path.exists(filename_report):
+    os.remove(filename_report)
 
 def report(filename, row_data):
-    global report_created
-    if not report_created:
+    if not os.path.exists(filename):
         wb = Workbook()
         ws = wb.active
         ws.append([
@@ -41,14 +42,12 @@ def report(filename, row_data):
             "Status",
             "Screenshot"
         ])
-        wb.save(filename)
-        report_created = True
+    else:
+        wb = load_workbook(filename)
+        ws = wb.active
 
-    wb = load_workbook(filename)
-    ws = wb.active
     ws.append(row_data)
     wb.save(filename)
-
 
 @pytest.mark.parametrize("action, value", formatted_data, ids=ids)
 def test_editcart(action, value):
@@ -99,11 +98,10 @@ def test_editcart(action, value):
         status = "FAIL"
         screenshot_path = take_screenshot(driver, name_prefix=f"editcart_{action}")
 
-    print(f"[{action}] Expected quantity={expected_qty}, Actual quantity={new_qty}")
+    print(f"\n[{action}] Expected quantity={expected_qty}, Actual quantity={new_qty}")
     print(f"[{action}] Expected total={expected_total}, Actual total={actual_total}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename_report = os.path.join("tests", "reports", "EditCart_Report.xlsx")
 
     report(filename_report, [
         test_time,

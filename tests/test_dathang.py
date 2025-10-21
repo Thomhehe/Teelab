@@ -10,12 +10,13 @@ from utils.data_untils import load_excel_data
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Dathang")
-report_created = False
+
+filename_report = r"D:\PyCharm\Teelab\tests\reports\Dathang_Report.xlsx"
+if os.path.exists(filename_report):
+    os.remove(filename_report)
 
 def report(filename, row_data):
-    global report_created
-    if not report_created:
-
+    if not os.path.exists(filename):
         wb = Workbook()
         ws = wb.active
         ws.append([
@@ -31,11 +32,10 @@ def report(filename, row_data):
             "Trạng thái",
             "Screenshot"
         ])
-        wb.save(filename)
-        report_created = True
+    else:
+        wb = load_workbook(filename)
+        ws = wb.active
 
-    wb = load_workbook(filename)
-    ws = wb.active
     ws.append(row_data)
     wb.save(filename)
 
@@ -54,7 +54,6 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
     print(f"Kết quả thực tế: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "reports", "Dathang_Report.xlsx")
     screenshot_path = ""
 
     try:
@@ -65,5 +64,5 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
         screenshot_path = take_screenshot(driver, f"dathangfail_{hoten}")
         raise
     finally:
-        report(filename, [test_time, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected, actual, status, screenshot_path])
+        report(filename_report, [test_time, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected, actual, status, screenshot_path])
         driver.quit()

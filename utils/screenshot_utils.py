@@ -2,8 +2,11 @@ import os
 from datetime import datetime
 
 def take_screenshot(driver, name_prefix="error"):
+    # Lấy đường dẫn tuyệt đối của thư mục teelab (gốc dự án)
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    folder_path = os.path.join(os.getcwd(), "screenshots")
+    # Đường dẫn đến thư mục screenshots trong teelab
+    folder_path = os.path.join(base_dir, "screenshots")
     if not os.path.exists(folder_path):
         os.makedirs(folder_path)
 

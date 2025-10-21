@@ -11,14 +11,15 @@ from utils.data_untils import load_excel_data
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Signup")
-report_created = False
 
 ids = [f"{i+1}. ({row[5]})" for i, row in enumerate(test_data)]
 
-def report(filename, row_data):
-    global report_created
-    if not report_created:
+filename_report = r"D:\PyCharm\Teelab\tests\reports\Signup_Report.xlsx"
+if os.path.exists(filename_report):
+    os.remove(filename_report)
 
+def report(filename, row_data):
+    if not os.path.exists(filename):
         wb = Workbook()
         ws = wb.active
         ws.append([
@@ -33,11 +34,10 @@ def report(filename, row_data):
             "Status",
             "Screenshot"
         ])
-        wb.save(filename)
-        report_created = True
+    else:
+        wb = load_workbook(filename)
+        ws = wb.active
 
-    wb = load_workbook(filename)
-    ws = wb.active
     ws.append(row_data)
     wb.save(filename)
 
@@ -60,11 +60,10 @@ def test_signup(lastname, name, email, phone, password, expected):
 
     actual = signup_page.get_result()
 
-    print(f"Expected: {expected}")
+    print(f"\nExpected: {expected}")
     print(f"Actual: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    filename = os.path.join("tests", "reports", "Signup_Report.xlsx")
     screenshot_path = ""
 
     try:
@@ -76,5 +75,5 @@ def test_signup(lastname, name, email, phone, password, expected):
         raise
 
     finally:
-        report(filename, [test_time, lastname, name, email, phone, password, expected, actual, status, screenshot_path])
+        report(filename_report, [test_time, lastname, name, email, phone, password, expected, actual, status, screenshot_path])
         driver.quit()
