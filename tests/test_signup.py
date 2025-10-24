@@ -7,14 +7,14 @@ from selenium import webdriver
 
 from pages.login_page import Login
 from pages.signup_page import Signup
-from utils.data_untils import load_excel_data
+from utils.data_utils import load_excel_data
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Signup")
 
 ids = [f"{i+1}. ({row[5]})" for i, row in enumerate(test_data)]
 
-filename_report = r"D:\PyCharm\Teelab\tests\reports\Signup_Report.xlsx"
+filename_report = r"D:\PyCharm\Teelab\reports\Signup_Report.xlsx"
 if os.path.exists(filename_report):
     os.remove(filename_report)
 

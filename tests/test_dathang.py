@@ -6,12 +6,12 @@ from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
 from pages.dathang_page import Dathang
-from utils.data_untils import load_excel_data
+from utils.data_utils import load_excel_data
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Dathang")
 
-filename_report = r"D:\PyCharm\Teelab\tests\reports\Dathang_Report.xlsx"
+filename_report = r"D:\PyCharm\Teelab\reports\Dathang_Report.xlsx"
 if os.path.exists(filename_report):
     os.remove(filename_report)
 

@@ -14,8 +14,7 @@ def load_json_data(filepath):
         return json.load(jsonfile)
 
 def load_excel_data(filename, sheetname=None):
-    # Đường dẫn tuyệt đối tới file Teelab.xlsx ở D:\PyCharm\Teelab
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # D:\PyCharm\Teelab\teelab
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     project_root = os.path.abspath(os.path.join(base_dir))
     filepath = os.path.join(project_root, "Teelab.xlsx")
 

@@ -7,7 +7,7 @@ from selenium import webdriver
 from pages.addcart_page import Cart
 from utils.screenshot_utils import take_screenshot
 
-filename_report = r"D:\PyCharm\Teelab\tests\reports\AddCart_Report.xlsx"
+filename_report = r"D:\PyCharm\Teelab\reports\AddCart_Report.xlsx"
 if os.path.exists(filename_report):
     os.remove(filename_report)
 

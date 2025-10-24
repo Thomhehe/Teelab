@@ -6,13 +6,13 @@ import pytest
 from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 from pages.search_page import Search
-from utils.data_untils import load_excel_data
+from utils.data_utils import load_excel_data
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Search")
 ids = [f"{i+1}. ({row[0]})" for i, row in enumerate(test_data)]
 
-filename_report = r"D:\PyCharm\Teelab\tests\reports\Search_Report.xlsx"
+filename_report = r"D:\PyCharm\Teelab\reports\Search_Report.xlsx"
 if os.path.exists(filename_report):
     os.remove(filename_report)
 

@@ -5,7 +5,7 @@ from selenium import webdriver
 from openpyxl import load_workbook, Workbook
 
 from pages.editcart_page import EditCart
-from utils.data_untils import load_excel_data
+from utils.data_utils import load_excel_data
 import pytest
 
 from utils.screenshot_utils import take_screenshot
@@ -23,7 +23,7 @@ for i, row in enumerate(test_data):
     except Exception as e:
         print(f"Bỏ qua dòng dữ liệu lỗi: {row} ({e})")
 
-filename_report = r"D:\PyCharm\Teelab\tests\reports\EditCart_Report.xlsx"
+filename_report = r"D:\PyCharm\Teelab\reports\EditCart_Report.xlsx"
 if os.path.exists(filename_report):
     os.remove(filename_report)
 
@@ -57,7 +57,16 @@ def test_editcart(action, value):
 
     editcart_page = EditCart(driver)
     editcart_page.select_product_buy()
+    details = editcart_page.get_information_details()
     editcart_page.add_product_cart()
+    cart = editcart_page.get_information_cart()
+
+    details_color_size = f"{details['color']} / {details['size']}"
+    expected = f"{details['name']} | {details['price']} | {details_color_size}".strip()
+    actual = f"{cart['name']} | {cart['price']} | {cart['color_size']}".strip()
+    assert expected == actual, f"Sản phẩm trong giỏ không trùng khớp thông tin chi tiết!"
+    print(f"\nExpected: {expected}")
+    print(f"Actual: {actual}")
 
     time.sleep(2)
 
@@ -98,7 +107,7 @@ def test_editcart(action, value):
         status = "FAIL"
         screenshot_path = take_screenshot(driver, name_prefix=f"editcart_{action}")
 
-    print(f"\n[{action}] Expected quantity={expected_qty}, Actual quantity={new_qty}")
+    print(f"[{action}] Expected quantity={expected_qty}, Actual quantity={new_qty}")
     print(f"[{action}] Expected total={expected_total}, Actual total={actual_total}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
