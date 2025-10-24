@@ -1,39 +1,11 @@
 import os
 from datetime import datetime
 
-from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
 from pages.addcart_page import Cart
+from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
-
-filename_report = r"D:\PyCharm\Teelab\reports\AddCart_Report.xlsx"
-if os.path.exists(filename_report):
-    os.remove(filename_report)
-
-def report(filename, row_data):
-    if not os.path.exists(filename):
-        wb = Workbook()
-        ws = wb.active
-        ws.append([
-            "Time",
-            "Product_expected",
-            "Product_actual",
-            "Price_expected",
-            "Price_actual",
-            "Color/Size_expected",
-            "Color/Size_actual",
-            "Total_expected",
-            "Total_actual",
-            "Status",
-            "Screenshot"
-        ])
-    else:
-        wb = load_workbook(filename)
-        ws = wb.active
-
-    ws.append(row_data)
-    wb.save(filename)
 
 def test_addcart():
     driver = webdriver.Chrome()
@@ -62,6 +34,7 @@ def test_addcart():
     print(f"Total_actual: {total_actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filename_report = r"D:\PyCharm\Teelab\reports\AddCart_Report.xlsx"
     screenshot_path = ""
 
     try:
@@ -73,5 +46,16 @@ def test_addcart():
         screenshot_path = take_screenshot(driver, f"addcartfail_{details['name']}")
         raise e
     finally:
-        report(filename_report, [test_time, details['name'], cart['name'], details['price'], cart['price'],details_color_size, cart['color_size'], total_expected, total_actual, status, screenshot_path])
+        write_report(filename_report, {
+            "Time": test_time,
+            "Product_Name_Expected": details["name"],
+            "Product_Name_Actual": cart["name"],
+            "Price_Expected": details["price"],
+            "Price_Actual": cart["price"],
+            "Color/Size_Expected": details_color_size,
+            "Color/Size_Actual": cart["color_size"],
+            "Total_Expected": total_expected,
+            "Total_Actual": total_actual,
+            "Status": status,
+            "Screenshot": screenshot_path})
         driver.quit()
