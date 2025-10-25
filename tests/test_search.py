@@ -1,9 +1,5 @@
 import re
-from datetime import datetime
-import os
-
 import pytest
-from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 from pages.search_page import Search
 from utils.data_utils import load_excel_data

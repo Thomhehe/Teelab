@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 
 from selenium import webdriver
 from pages.deletecart_page import DeleteCart

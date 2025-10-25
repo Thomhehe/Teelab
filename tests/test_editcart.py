@@ -1,5 +1,4 @@
 import time
-from datetime import datetime
 from selenium import webdriver
 
 from pages.editcart_page import EditCart
@@ -21,8 +20,6 @@ for i, row in enumerate(test_data):
         ids.append(f"{i+1}. ({action_} {value_})")
     except Exception as e:
         print(f"Bỏ qua dòng dữ liệu lỗi: {row} ({e})")
-
-
 
 @pytest.mark.parametrize("action, value", formatted_data, ids=ids)
 def test_editcart(action, value):

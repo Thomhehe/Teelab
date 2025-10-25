@@ -2,7 +2,6 @@ from selenium.webdriver.common.by import By
 
 from pages.addcart_page import Cart
 
-
 class DeleteCart(Cart):
 
     delete_btn = (By.CSS_SELECTOR, "button.btn.btn-outline-danger.remove-item-cart")

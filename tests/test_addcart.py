@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from selenium import webdriver
 
 from pages.addcart_page import Cart
@@ -25,7 +23,6 @@ def test_addcart():
     print(f"\nExpected: {expected}")
     print(f"Actual: {actual}")
 
-    # --- Tính tổng tiền mong đợi & lấy tổng tiền thực tế ---
     total_expected = addcart_page.calculate_total_amount()
     total_actual = addcart_page.get_total_amount()
 

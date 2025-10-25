@@ -14,8 +14,8 @@ def write_report(filename, data_dict):
         wb = Workbook()
         ws = wb.active
         ws.title = "Report"
-        ws.append(list(ordered_data.keys()))   # header
-        ws.append(list(ordered_data.values())) # data
+        ws.append(list(ordered_data.keys()))
+        ws.append(list(ordered_data.values()))
         wb.save(filename)
         wb.close()
         return
