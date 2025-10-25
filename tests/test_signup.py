@@ -35,7 +35,6 @@ def test_signup(lastname, name, email, phone, password, expected):
     print(f"\nExpected: {expected}")
     print(f"Actual: {actual}")
 
-    test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename_report = r"D:\PyCharm\Teelab\reports\Signup_Report.xlsx"
     screenshot_path = ""
 
@@ -49,7 +48,6 @@ def test_signup(lastname, name, email, phone, password, expected):
 
     finally:
         write_report(filename_report, {
-            "Time": test_time,
             "LastName": lastname,
             "Name": name,
             "Email": email,

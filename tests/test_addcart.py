@@ -32,7 +32,6 @@ def test_addcart():
     print(f"Total_expected: {total_expected}")
     print(f"Total_actual: {total_actual}")
 
-    test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename_report = r"D:\PyCharm\Teelab\reports\AddCart_Report.xlsx"
     screenshot_path = ""
 
@@ -46,7 +45,6 @@ def test_addcart():
         raise e
     finally:
         write_report(filename_report, {
-            "Time": test_time,
             "Product_Name_Expected": details["name"],
             "Product_Name_Actual": cart["name"],
             "Price_Expected": details["price"],

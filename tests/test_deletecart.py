@@ -35,7 +35,6 @@ def test_deletecart():
     print(f"\nExpected message: {expected_msg}")
     print(f"Actual message: {actual_msg}")
 
-    test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename_report = r"D:\PyCharm\Teelab\reports\DeleteCart_Report.xlsx"
     screenshot_path = ""
 
@@ -49,7 +48,6 @@ def test_deletecart():
 
     finally:
         write_report(filename_report, {
-            "Time": test_time,
             "Expected": expected_msg,
             "Actual": actual_msg,
             "Status": status,

@@ -75,16 +75,13 @@ def test_editcart(action, value):
     else:
         status = "FAIL"
         screenshot_path = take_screenshot(driver, name_prefix=f"editcart_{action}")
-        # print(f"Expected total={expected_total}, Actual={actual_total}")
 
     print(f"[{action}] Expected quantity={expected_qty}, Actual quantity={new_qty}")
     print(f"[{action}] Expected total={expected_total}, Actual total={actual_total}")
 
-    test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename_report = r"D:\PyCharm\Teelab\reports\EditCart_Report.xlsx"
 
     write_report(filename_report, {
-        "Time": test_time,
         "Action": action,
         "Value": value,
         "Expected_Qty": expected_qty,

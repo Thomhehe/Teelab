@@ -26,7 +26,6 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
     print(f"Kết quả mong đợi: {expected}")
     print(f"Kết quả thực tế: {actual}")
 
-    test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename_report = r"D:\PyCharm\Teelab\reports\Dathang_Report.xlsx"
     screenshot_path = ""
 
@@ -39,7 +38,6 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
         raise
     finally:
         write_report(filename_report, {
-            "Thời gian": test_time,
             "Họ tên": hoten,
             "Số điện thoại": sdt,
             "Địa chỉ": diachi,

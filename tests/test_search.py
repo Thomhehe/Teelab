@@ -31,7 +31,6 @@ def test_search(keyword, expected):
     print(f"Quantity expected: {quantity_expected}")
     print(f"Quantity actual: {quantity_actual}")
 
-    test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename_report = r"D:\PyCharm\Teelab\reports\Search_Report.xlsx"
     screenshot_path = ""
 
@@ -45,7 +44,6 @@ def test_search(keyword, expected):
         raise
     finally:
         write_report(filename_report, {
-            "Time": test_time,
             "Keyword": keyword,
             "Expected": expected,
             "Actual": actual,

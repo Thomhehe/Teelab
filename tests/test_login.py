@@ -28,7 +28,6 @@ def test_login(email, password, expected):
     print(f"\nExpected: {expected}")
     print(f"Actual: {actual}")
 
-    test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     filename_report = r"D:\PyCharm\Teelab\reports\Login_Report.xlsx"
     screenshot_path = ""
 
@@ -42,7 +41,6 @@ def test_login(email, password, expected):
 
     finally:
         write_report(filename_report, {
-            "Time": test_time,
             "Email": email,
             "Password": password,
             "Expected": expected,
