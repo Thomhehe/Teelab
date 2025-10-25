@@ -1,13 +1,12 @@
-import os
 import time
 from datetime import datetime
 from selenium import webdriver
-from openpyxl import load_workbook, Workbook
 
 from pages.editcart_page import EditCart
 from utils.data_utils import load_excel_data
 import pytest
 
+from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="EditQuantity")
@@ -23,31 +22,7 @@ for i, row in enumerate(test_data):
     except Exception as e:
         print(f"Bỏ qua dòng dữ liệu lỗi: {row} ({e})")
 
-filename_report = r"D:\PyCharm\Teelab\reports\EditCart_Report.xlsx"
-if os.path.exists(filename_report):
-    os.remove(filename_report)
 
-def report(filename, row_data):
-    if not os.path.exists(filename):
-        wb = Workbook()
-        ws = wb.active
-        ws.append([
-            "Time",
-            "Action",
-            "Value",
-            "Expected_Qty",
-            "Actual_Qty",
-            "Expected_Total",
-            "Actual_Total",
-            "Status",
-            "Screenshot"
-        ])
-    else:
-        wb = load_workbook(filename)
-        ws = wb.active
-
-    ws.append(row_data)
-    wb.save(filename)
 
 @pytest.mark.parametrize("action, value", formatted_data, ids=ids)
 def test_editcart(action, value):
@@ -92,36 +67,32 @@ def test_editcart(action, value):
     time.sleep(2)
 
     new_qty = editcart_page.get_quantity()
-    new_total = editcart_page.get_total_amount()
+    actual_total, expected_total = editcart_page.get_actual_and_expected_total()
     screenshot_path = ""
 
-    try:
-        actual_total, expected_total = editcart_page.verify_total_amount()
-        status = "PASS" if new_qty == expected_qty and actual_total == expected_total else "FAIL"
-        if status == "FAIL":
-            screenshot_path = take_screenshot(driver, name_prefix=f"editcart_{action}")
-    except AssertionError as e:
-        print(f"Lỗi xác minh tổng tiền: {e}")
-        actual_total = new_total
-        expected_total = editcart_page.calculate_total_amount()
+    if new_qty == expected_qty and actual_total == expected_total:
+        status = "PASS"
+    else:
         status = "FAIL"
         screenshot_path = take_screenshot(driver, name_prefix=f"editcart_{action}")
+        # print(f"Expected total={expected_total}, Actual={actual_total}")
 
     print(f"[{action}] Expected quantity={expected_qty}, Actual quantity={new_qty}")
     print(f"[{action}] Expected total={expected_total}, Actual total={actual_total}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filename_report = r"D:\PyCharm\Teelab\reports\EditCart_Report.xlsx"
 
-    report(filename_report, [
-        test_time,
-        action,
-        value,
-        expected_qty,
-        new_qty,
-        expected_total,
-        actual_total,
-        status,
-        screenshot_path
-    ])
+    write_report(filename_report, {
+        "Time": test_time,
+        "Action": action,
+        "Value": value,
+        "Expected_Qty": expected_qty,
+        "Actual_Qty": new_qty,
+        "Expected_Total": expected_total,
+        "Actual_Total": actual_total,
+        "Status": status,
+        "Screenshot": screenshot_path
+    })
 
     driver.quit()

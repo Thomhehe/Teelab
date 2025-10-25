@@ -7,37 +7,10 @@ from selenium import webdriver
 
 from pages.dathang_page import Dathang
 from utils.data_utils import load_excel_data
+from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Dathang")
-
-filename_report = r"D:\PyCharm\Teelab\reports\Dathang_Report.xlsx"
-if os.path.exists(filename_report):
-    os.remove(filename_report)
-
-def report(filename, row_data):
-    if not os.path.exists(filename):
-        wb = Workbook()
-        ws = wb.active
-        ws.append([
-            "Thời gian",
-            "Họ tên",
-            "Số điện thoại",
-            "Địa chỉ",
-            "Tình thành",
-            "Quận huyện",
-            "Phường xã",
-            "Kết quả mong đợi",
-            "Kết quả thực tế",
-            "Trạng thái",
-            "Screenshot"
-        ])
-    else:
-        wb = load_workbook(filename)
-        ws = wb.active
-
-    ws.append(row_data)
-    wb.save(filename)
 
 @pytest.mark.parametrize("hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected", test_data)
 def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
@@ -54,6 +27,7 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
     print(f"Kết quả thực tế: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filename_report = r"D:\PyCharm\Teelab\reports\Dathang_Report.xlsx"
     screenshot_path = ""
 
     try:
@@ -64,5 +38,16 @@ def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):
         screenshot_path = take_screenshot(driver, f"dathangfail_{hoten}")
         raise
     finally:
-        report(filename_report, [test_time, hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected, actual, status, screenshot_path])
+        write_report(filename_report, {
+            "Thời gian": test_time,
+            "Họ tên": hoten,
+            "Số điện thoại": sdt,
+            "Địa chỉ": diachi,
+            "Tình thành": tinhthanh,
+            "Quận huyện": quanhuyen,
+            "Phường xã": phuongxa,
+            "Kết quả mong đợi": expected,
+            "Kết quả thực tế": actual,
+            "Trạng thái": status,
+            "Screenshot": screenshot_path})
         driver.quit()

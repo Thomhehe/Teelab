@@ -60,9 +60,7 @@ class EditCart(Cart):
         quantity_element = self.driver.find_element(*self.cart_quantity)
         return int(quantity_element.get_attribute("value"))
 
-    def verify_total_amount(self):
+    def get_actual_and_expected_total(self):
         actual_total = self.get_total_amount()
         expected_total = self.calculate_total_amount()
-        assert actual_total == expected_total, \
-            f"Tổng tiền sai! Mong đợi: {expected_total}, Thực tế: {actual_total}"
         return actual_total, expected_total

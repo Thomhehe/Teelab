@@ -7,35 +7,11 @@ from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 from pages.search_page import Search
 from utils.data_utils import load_excel_data
+from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Search")
 ids = [f"{i+1}. ({row[0]})" for i, row in enumerate(test_data)]
-
-filename_report = r"D:\PyCharm\Teelab\reports\Search_Report.xlsx"
-if os.path.exists(filename_report):
-    os.remove(filename_report)
-
-def report(filename, row_data):
-    if not os.path.exists(filename):
-        wb = Workbook()
-        ws = wb.active
-        ws.append([
-            "Time",
-            "Keyword",
-            "Expected",
-            "Actual",
-            "Expected Quantity",
-            "Actual Quantity",
-            "Status",
-            "Screenshot"
-        ])
-    else:
-        wb = load_workbook(filename)
-        ws = wb.active
-
-    ws.append(row_data)
-    wb.save(filename)
 
 @pytest.mark.parametrize("keyword, expected", test_data, ids=ids)
 def test_search(keyword, expected):
@@ -56,6 +32,7 @@ def test_search(keyword, expected):
     print(f"Quantity actual: {quantity_actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filename_report = r"D:\PyCharm\Teelab\reports\Search_Report.xlsx"
     screenshot_path = ""
 
     try:
@@ -67,5 +44,14 @@ def test_search(keyword, expected):
         screenshot_path = take_screenshot(driver, name_prefix=f"search_{keyword}")
         raise
     finally:
-        report(filename_report, [test_time, keyword, expected, actual, quantity_expected, quantity_actual, status, screenshot_path])
+        write_report(filename_report, {
+            "Time": test_time,
+            "Keyword": keyword,
+            "Expected": expected,
+            "Actual": actual,
+            "Expected Quantity": quantity_expected,
+            "Actual Quantity": quantity_actual,
+            "Status": status,
+            "Screenshot": screenshot_path
+        })
         driver.quit()

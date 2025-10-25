@@ -1,45 +1,17 @@
-import os
 from datetime import datetime
 
 import pytest
-from openpyxl import Workbook, load_workbook
 from selenium import webdriver
 
 from pages.login_page import Login
 from pages.signup_page import Signup
 from utils.data_utils import load_excel_data
+from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
 test_data = load_excel_data("Teelab.xlsx", sheetname="Signup")
 
 ids = [f"{i+1}. ({row[5]})" for i, row in enumerate(test_data)]
-
-filename_report = r"D:\PyCharm\Teelab\reports\Signup_Report.xlsx"
-if os.path.exists(filename_report):
-    os.remove(filename_report)
-
-def report(filename, row_data):
-    if not os.path.exists(filename):
-        wb = Workbook()
-        ws = wb.active
-        ws.append([
-            "Time",
-            "LastName",
-            "Name",
-            "Email",
-            "Phone",
-            "Password",
-            "Expected",
-            "Actual",
-            "Status",
-            "Screenshot"
-        ])
-    else:
-        wb = load_workbook(filename)
-        ws = wb.active
-
-    ws.append(row_data)
-    wb.save(filename)
 
 @pytest.mark.parametrize("lastname, name, email, phone, password, expected", test_data, ids=ids)
 def test_signup(lastname, name, email, phone, password, expected):
@@ -64,6 +36,7 @@ def test_signup(lastname, name, email, phone, password, expected):
     print(f"Actual: {actual}")
 
     test_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    filename_report = r"D:\PyCharm\Teelab\reports\Signup_Report.xlsx"
     screenshot_path = ""
 
     try:
@@ -75,5 +48,16 @@ def test_signup(lastname, name, email, phone, password, expected):
         raise
 
     finally:
-        report(filename_report, [test_time, lastname, name, email, phone, password, expected, actual, status, screenshot_path])
+        write_report(filename_report, {
+            "Time": test_time,
+            "LastName": lastname,
+            "Name": name,
+            "Email": email,
+            "Phone": phone,
+            "Password": password,
+            "Expected": expected,
+            "Actual": actual,
+            "Status": status,
+            "Screenshot": screenshot_path
+        })
         driver.quit()
