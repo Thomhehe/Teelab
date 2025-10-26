@@ -10,7 +10,7 @@ from utils.data_utils import load_excel_data
 from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
-test_data = load_excel_data("Teelab.xlsx", sheetname="Dathang")
+test_data = load_excel_data(sheetname="Dathang")
 
 @pytest.mark.parametrize("hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected", test_data)
 def test_dathang(hoten, sdt, diachi, tinhthanh, quanhuyen, phuongxa, expected):

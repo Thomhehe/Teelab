@@ -1,0 +1,30 @@
+[
+  {
+    "keyword": "TÚI",
+    "expected": "Có 5 kết quả tìm kiếm phù hợp"
+  },
+  {
+    "keyword": "mũ",
+    "expected": "Có 3 kết quả tìm kiếm phù hợp"
+  },
+  {
+    "keyword": "tui",
+    "expected": "Có 5 kết quả tìm kiếm phù hợp"
+  },
+  {
+    "keyword": "!$#",
+    "expected": "Nhập từ khóa để tìm kiếm"
+  },
+  {
+    "keyword": "balo",
+    "expected": "Có 3 kết quả tìm kiếm phù hợp"
+  },
+  {
+    "keyword": "q",
+    "expected": "Có 22 kết quả tìm kiếm phù hợp"
+  },
+  {
+    "keyword": "Áo khoác",
+    "expected": "Có 12 kết quả tìm kiếm phù hợp"
+  }
+]

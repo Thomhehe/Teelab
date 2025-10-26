@@ -8,7 +8,7 @@ import pytest
 from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
-test_data = load_excel_data("Teelab.xlsx", sheetname="EditQuantity")
+test_data = load_excel_data(sheetname="EditQuantity")
 
 formatted_data = []
 ids = []

@@ -6,7 +6,7 @@ from utils.data_utils import load_excel_data
 from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
-test_data = load_excel_data("Teelab.xlsx", sheetname="Login")
+test_data = load_excel_data(sheetname="Login")
 ids = [f"{i+1}. ({row[2]})" for i, row in enumerate(test_data)]
 
 @pytest.mark.parametrize("email, password, expected", test_data, ids=ids)

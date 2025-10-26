@@ -7,7 +7,7 @@ from utils.data_utils import load_excel_data
 from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
-test_data = load_excel_data("Teelab.xlsx", sheetname="Signup")
+test_data = load_excel_data(sheetname="Signup")
 
 ids = [f"{i+1}. ({row[5]})" for i, row in enumerate(test_data)]
 

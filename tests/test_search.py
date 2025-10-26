@@ -2,15 +2,21 @@ import re
 import pytest
 from selenium import webdriver
 from pages.search_page import Search
-from utils.data_utils import load_excel_data
+from utils.data_utils import load_excel_data, load_json_data
 from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
-test_data = load_excel_data("Teelab.xlsx", sheetname="Search")
-ids = [f"{i+1}. ({row[0]})" for i, row in enumerate(test_data)]
+json_filepath = r"D:\PyCharm\Teelab\data\search.json"
+test_data = load_json_data(json_filepath)
+ids = [f"{i+1}. ({d['keyword']})" for i, d in enumerate(test_data)]
 
-@pytest.mark.parametrize("keyword, expected", test_data, ids=ids)
-def test_search(keyword, expected):
+# test_data = load_excel_data(sheetname="Search")
+# ids = [f"{i+1}. ({row[0]})" for i, row in enumerate(test_data)]
+
+@pytest.mark.parametrize("data", test_data, ids=ids)
+def test_search(data):
+    keyword = data["keyword"]
+    expected = data["expected"]
     driver = webdriver.Chrome()
     driver.maximize_window()
     driver.get("https://teelab.vn/")

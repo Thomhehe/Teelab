@@ -13,11 +13,8 @@ def load_json_data(filepath):
     with open(filepath, encoding='utf-8') as jsonfile:
         return json.load(jsonfile)
 
-def load_excel_data(filename, sheetname=None):
-    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    project_root = os.path.abspath(os.path.join(base_dir))
-    filepath = os.path.join(project_root, "Teelab.xlsx")
-
+def load_excel_data(sheetname=None):
+    filepath = r"D:\PyCharm\Teelab\data\Teelab.xlsx"
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"Không tìm thấy file Excel: {filepath}")
 
