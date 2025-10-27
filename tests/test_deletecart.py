@@ -7,10 +7,9 @@ from utils.screenshot_utils import take_screenshot
 
 test_data = [("Không có sản phẩm nào trong giỏ hàng của bạn",)]
 
-def test_deletecart():
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    driver.get("https://teelab.vn/")
+def test_deletecart(setup_teardown):
+    driver = setup_teardown
+
     deletecart_page = DeleteCart(driver)
 
     deletecart_page.select_product_buy()
@@ -52,4 +51,3 @@ def test_deletecart():
             "Status": status,
             "Screenshot": screenshot_path
         })
-        driver.quit()

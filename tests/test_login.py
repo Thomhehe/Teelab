@@ -10,10 +10,8 @@ test_data = load_excel_data(sheetname="Login")
 ids = [f"{i+1}. ({row[2]})" for i, row in enumerate(test_data)]
 
 @pytest.mark.parametrize("email, password, expected", test_data, ids=ids)
-def test_login(email, password, expected):
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    driver.get("https://teelab.vn/")
+def test_login(setup_teardown, email, password, expected):
+    driver = setup_teardown
     login_page = Login(driver)
 
     login_page.account()
@@ -46,4 +44,3 @@ def test_login(email, password, expected):
             "Status": status,
             "Screenshot": screenshot_path
         })
-        driver.quit()

@@ -12,10 +12,11 @@ test_data = load_excel_data(sheetname="Signup")
 ids = [f"{i+1}. ({row[5]})" for i, row in enumerate(test_data)]
 
 @pytest.mark.parametrize("lastname, name, email, phone, password, expected", test_data, ids=ids)
-def test_signup(lastname, name, email, phone, password, expected):
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    driver.get("https://teelab.vn/")
+def test_signup(setup_teardown, lastname, name, email, phone, password, expected):
+    # driver = webdriver.Chrome()
+    # driver.maximize_window()
+    # driver.get("https://teelab.vn/")
+    driver = setup_teardown
     login_page = Login(driver)
     signup_page = Signup(driver)
 

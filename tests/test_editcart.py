@@ -22,10 +22,12 @@ for i, row in enumerate(test_data):
         print(f"Bỏ qua dòng dữ liệu lỗi: {row} ({e})")
 
 @pytest.mark.parametrize("action, value", formatted_data, ids=ids)
-def test_editcart(action, value):
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    driver.get("https://teelab.vn/")
+def test_editcart(setup_teardown, action, value):
+    # driver = webdriver.Chrome()
+    # driver.maximize_window()
+    # driver.get("https://teelab.vn/")
+
+    driver = setup_teardown
 
     editcart_page = EditCart(driver)
     editcart_page.select_product_buy()
@@ -88,5 +90,3 @@ def test_editcart(action, value):
         "Status": status,
         "Screenshot": screenshot_path
     })
-
-    driver.quit()

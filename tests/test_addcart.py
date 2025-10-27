@@ -1,14 +1,9 @@
-from selenium import webdriver
-
 from pages.addcart_page import Cart
 from utils.report_utils import write_report
 from utils.screenshot_utils import take_screenshot
 
-def test_addcart():
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    driver.get("https://teelab.vn/")
-
+def test_addcart(setup_teardown):
+    driver = setup_teardown
     addcart_page = Cart(driver)
 
     addcart_page.select_product_buy()
@@ -52,4 +47,3 @@ def test_addcart():
             "Total_Actual": total_actual,
             "Status": status,
             "Screenshot": screenshot_path})
-        driver.quit()

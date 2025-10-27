@@ -10,16 +10,14 @@ json_filepath = r"D:\PyCharm\Teelab\data\search.json"
 test_data = load_json_data(json_filepath)
 ids = [f"{i+1}. ({d['keyword']})" for i, d in enumerate(test_data)]
 
-# test_data = load_excel_data(sheetname="Search")
-# ids = [f"{i+1}. ({row[0]})" for i, row in enumerate(test_data)]
-
 @pytest.mark.parametrize("data", test_data, ids=ids)
-def test_search(data):
+def test_search(setup_teardown, data):
     keyword = data["keyword"]
     expected = data["expected"]
-    driver = webdriver.Chrome()
-    driver.maximize_window()
-    driver.get("https://teelab.vn/")
+    driver = setup_teardown
+    # driver = webdriver.Chrome()
+    # driver.maximize_window()
+    # driver.get("https://teelab.vn/")
     search_page = Search(driver)
 
     search_page.search(keyword)
@@ -54,4 +52,4 @@ def test_search(data):
             "Status": status,
             "Screenshot": screenshot_path
         })
-        driver.quit()
+        # driver.quit()
